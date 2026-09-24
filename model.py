@@ -29,8 +29,20 @@ def one_reroll_die_value(sides):
 
     # return {"value": 0, "reroll_faces": [0]}
 
-# Step 3 - pay_per_reroll_die_game (not yet solved)
-# TODO: implement
+# Step 3 - pay_per_reroll_die_game
+def pay_per_reroll_die_game(sides, reroll_cost):
+    # TODO: return {'threshold': t, 'value': V} for the pay-per-reroll die game under the optimal threshold policy.
+    
+    max_v = 0
+    smallest_t = 0
+    for t in range(1, sides + 1):
+        v_t = ((t + sides) / 2) - ((t - 1) / (sides - t + 1) * reroll_cost)
+
+        if v_t > max_v:
+            max_v = v_t
+            smallest_t = t
+
+    return {"threshold": smallest_t, "value": max_v}
 
 # Step 4 - red_black_card_game_value (not yet solved)
 # TODO: implement
