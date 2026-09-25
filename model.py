@@ -46,7 +46,6 @@ def pay_per_reroll_die_game(sides, reroll_cost):
 
 # Step 4 - red_black_card_game_value
 import functools
-import time
 
 def red_black_card_game_value(num_red, num_black):
     # TODO: return {'value': expected payout under optimal stopping, 'stop_now': whether to stop immediately}.
