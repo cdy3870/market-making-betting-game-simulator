@@ -169,8 +169,38 @@ def update_remaining_card_value(remaining_counts, revealed_value):
 
     return {"remaining_counts": remaining_counts_copy, "expected_value": expected_value}
 
-# Step 13 - run_market_making_episode (not yet solved)
-# TODO: implement
+# Step 13 - run_market_making_episode
+def run_market_making_episode(true_value, counterparty_sides, initial_fair_value, config):
+    # TODO: loop over counterparty_sides, quote, trade, update beliefs, then settle at true_value.
+
+    history = []
+    base_spread = config.get("base_spread", 0)
+    uncertainty = config.get("uncertainty", 0)
+    skew_strength = config.get("skew_strength", 0)
+    belief_adjustment = config.get("belief_adjustment", 0)
+    
+    cash_and_inv = {"cash": config.get("cash", 0), "inventory": config.get("inventory", 0)}
+    outputs = {"pnl": 0, "cash": config.get("cash", 0), "inventory": config.get("inventory", 0), "history": history}
+
+    new_fair_value = initial_fair_value
+
+    # print(counterparty_sides)
+
+
+
+    for side in counterparty_sides:
+        spread_width = uncertainty_spread(base_spread, uncertainty)
+        bid_and_ask = inventory_skewed_quotes(new_fair_value, spread_width, cash_and_inv["inventory"], skew_strength)
+        cash_and_inv = execute_trade({"cash": cash_and_inv["cash"], "inventory": cash_and_inv["inventory"]}, side, bid_and_ask["bid"], bid_and_ask["ask"])
+        new_fair_value = update_fair_value_from_trade(new_fair_value, side, bid_and_ask["bid"], bid_and_ask["ask"], belief_adjustment)
+
+        history.append({"bid": bid_and_ask["bid"], "ask": bid_and_ask["ask"], "side": side, "cash": cash_and_inv["cash"], "inventory": cash_and_inv["inventory"], "fair_value": new_fair_value})
+
+    pnl = mark_to_market_pnl(cash_and_inv["cash"], cash_and_inv["inventory"], true_value)
+    
+    outputs = {"pnl": pnl, "cash": cash_and_inv["cash"], "inventory": cash_and_inv["inventory"], "fair_value": new_fair_value, "history": history}
+
+    return outputs
 
 # Step 14 - summarize_episode_pnls (not yet solved)
 # TODO: implement
